@@ -94,7 +94,7 @@ exports.update = function(req, res, next) {
     req.user.save({fields: ["username", "password", "salt"]})
         .then(function(user) {
             req.flash('success', 'Usuario actualizado con éxito.');
-            res.redirect('/users');  // Redirección HTTP a /
+            res.redirect('/users/'+ user.id);  // Redirección HTTP a /
         })
         .catch(Sequelize.ValidationError, function(error) {
 
@@ -115,10 +115,30 @@ exports.update = function(req, res, next) {
 exports.destroy = function(req, res, next) {
     req.user.destroy()
         .then(function() {
+             // Borrando usuario logeado.
+            if (req.session.user && req.session.user.id === req.user.id) {
+                // borra la sesión y redirige a /
+                delete req.session.user;
+            }
             req.flash('success', 'Usuario eliminado con éxito.');
-            res.redirect('/users');
+            res.redirect('/');
         })
         .catch(function(error){ 
             next(error); 
         });
 };
+
+
+//Autenticar un usuario: Comprueba si el usuario esta registrado en users
+
+exports.autenticar = function(login, password) {
+    
+    return models.User.findOne({where: {username: login}})
+        .then(function(user) {
+            if (user && user.verifyPassword(password)) {
+                return user;
+            } else {
+                throw new Error('Autenticación fallida.');
+            }
+        });
+}; 
