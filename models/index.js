@@ -35,6 +35,22 @@ var User = sequelize.import(path.join(__dirname,'user'));
 Comment.belongsTo(Quiz);
 Quiz.hasMany(Comment);
 
+// sequelize.sync() crea e inicializa tabla de preguntas en DB
+sequelize.sync()
+  .then(function() {
+    // Ya se han creado las tablas necesarias.
+    return Quiz.count()
+      .then(function (c) {
+           if (c === 0) { // la tabla se inicializa solo si está vacía
+           return Quiz.create({ question: 'Capital de Italia',
+                                       answer: 'Roma'  })
+              .then(function() {
+                      console.log('Base de datos inicializada con datos');
+              });
+        }
+});
+})
+
 exports.Quiz = Quiz; // exportar definición de tabla Quiz
 exports.Comment = Comment; // exportar definición de tabla Comments
 exports.User = User; // exportar definición de tabla Users
