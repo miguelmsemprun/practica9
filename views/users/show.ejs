@@ -10,7 +10,7 @@
   <%= user.isAdmin ? "Si" : "No" %>
 </p>
 
-<% if (session.user) { %>
+<% if (session.user && (session.user.isAdmin || (user.username === session.user.id))) { %>
 <p>
   <a href="/users/<%= user.id %>/edit"> 
     <button type="button"> Editar </button>
@@ -23,6 +23,7 @@
   </a>
 </p>
 <% } %>
+
 
 <a href="/users"> 
    <button type="button">Volver</button>

@@ -20,7 +20,7 @@
       <tr>
          <td> <%= users[i].username %>  </td>
          <td> <%= users[i].isAdmin ? "Si" : "No" %> </td>
-         <% if (session.user) { %>
+         <% if (session.user && (session.user.id.isAdmin || (user[i].username === session.user.id))) { %>
           <td> <a href="/users/<%= users[i].id %>" > Ver </a>
                <a href="/users/<%= users[i].id %>/edit"> Editar </a>
                <a href="/users/<%= users[i].id %>?_method=DELETE" 
